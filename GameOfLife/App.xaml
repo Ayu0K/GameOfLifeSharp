@@ -1,0 +1,14 @@
+﻿<Application x:Class="GameOfLife.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:GameOfLife"
+             xmlns:converters="clr-namespace:GameOfLife.Common.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <converters:BooleanToVisibilityReConverter x:Key="BooleanToVisibilityReConverter"/>
+            <converters:BooleanReConverter x:Key="BooleanReConverter"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

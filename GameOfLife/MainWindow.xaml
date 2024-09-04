@@ -1,0 +1,139 @@
+﻿<Window x:Class="GameOfLife.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GameOfLife"
+        xmlns:vm="clr-namespace:GameOfLife.ViewModels"
+        mc:Ignorable="d"
+        Title="生命游戏" Height="450" Width="800">
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style TargetType="ToggleButton" x:Key="LifeStatusBlockStyle">
+                <Setter Property="Width" Value="100"/>
+                <Setter Property="Height" Value="100"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Border Background="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ToggleButton}, Path=Background}" Margin="4" CornerRadius="12"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter Property="Background" Value="Green"/>
+                    </Trigger>
+                    <Trigger Property="IsChecked" Value="False">
+                        <Setter Property="Background" Value="White"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Background="#EEEEF2">
+            <Viewbox Stretch="Uniform">
+                <ListView BorderThickness="0" Background="SkyBlue" Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}" ItemsSource="{Binding Cells}" VerticalAlignment="Center" HorizontalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ToggleButton Style="{DynamicResource LifeStatusBlockStyle}" IsChecked="{Binding IsAlive, Mode=TwoWay}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Style.Setters>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListViewItem">
+                                            <Grid>
+                                                <ContentPresenter/>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style.Setters>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </ListView>
+            </Viewbox>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="8,0,8,16">
+                <GroupBox Header="棋盘设置" Margin="0,0,0,8" Padding="8"  IsEnabled="{Binding IsRunning, Converter={StaticResource BooleanReConverter}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Vertical">
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="宽度" Margin="0,0,8,0"/>
+                                <Slider Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Minimum="10" Maximum="100" LargeChange="10" SmallChange="5" IsSnapToTickEnabled="True" TickFrequency="1" TickPlacement="None" Value="{Binding MapWidth}" Margin="0,0,8,0"/>
+                                <TextBox Grid.Column="2" Margin="0,0,8,0" VerticalAlignment="Center" Text="{Binding MapWidth, Mode=OneWay}" Width="28" TextAlignment="Right" IsReadOnly="True"/>
+                                <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="单位" Margin="0,0,8,0"/>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="高度" Margin="0,0,8,0"/>
+                                <Slider Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Minimum="10" Maximum="100" LargeChange="10" SmallChange="5" IsSnapToTickEnabled="True" TickFrequency="1" TickPlacement="None" Value="{Binding MapHeight}" Margin="0,0,8,0"/>
+                                <TextBox Grid.Column="2" Margin="0,0,8,0" VerticalAlignment="Center" Text="{Binding MapHeight, Mode=OneWay}" Width="28" TextAlignment="Right" IsReadOnly="True"/>
+                                <TextBlock Grid.Column="3" VerticalAlignment="Center" Text="单位" Margin="0,0,8,0"/>
+                            </Grid>
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="设定" Padding="16,8" Margin="4,0" Command="{Binding SetMapCommand}"/>
+                    </Grid>
+
+                </GroupBox>
+                <GroupBox Header="模拟设置" Margin="0,0,0,8" Padding="8" IsEnabled="{Binding IsRunning, Converter={StaticResource BooleanReConverter}}">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock VerticalAlignment="Center" Text="模拟间隔" Margin="0,0,8,0"/>
+                            <Slider VerticalAlignment="Center" Width="142" Orientation="Horizontal" Minimum="100" Maximum="10000" LargeChange="100" SmallChange="10" IsSnapToTickEnabled="True" TickFrequency="100" TickPlacement="None" Value="{Binding Interval}" Margin="0,0,8,0"/>
+                            <TextBox Margin="0,0,8,0" VerticalAlignment="Center" Text="{Binding Interval, Mode=OneWay}" Width="42" TextAlignment="Right" IsReadOnly="True"/>
+                            <TextBlock VerticalAlignment="Center" Text="ms" Margin="0,0,8,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center" Text="播种数量" Margin="0,0,8,0"/>
+                            <Slider VerticalAlignment="Center" Width="142" Orientation="Horizontal" Minimum="0" Maximum="{Binding MaxSeedingCount}" LargeChange="10" SmallChange="5" IsSnapToTickEnabled="True" TickFrequency="1" TickPlacement="None" Value="{Binding SeedingCount}" Margin="0,0,8,0"/>
+                            <TextBox Margin="0,0,8,0" VerticalAlignment="Center" Text="{Binding SeedingCount, Mode=OneWay}" Width="42" TextAlignment="Right" IsReadOnly="True"/>
+                            <TextBlock VerticalAlignment="Center" Text="个" Margin="0,0,8,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="控制" Padding="8">
+                    <WrapPanel HorizontalAlignment="Center">
+                        <Button Content="开始" Padding="16,8" Margin="4,0" Visibility="{Binding IsRunning, Converter={StaticResource BooleanToVisibilityReConverter}}" Command="{Binding StartSimulationCommand}"/>
+                        <Button Content="暂停" Padding="16,8" Margin="4,0" Visibility="{Binding IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}" Command="{Binding PauseSimulationCommand}"/>
+                        <Button Content="随机" Padding="16,8" Margin="4,0" IsEnabled="{Binding IsRunning, Converter={StaticResource BooleanReConverter}}" Command="{Binding SeedingCommand}"/>
+                        <Button Content="重置" Padding="16,8" Margin="4,0" IsEnabled="{Binding IsRunning, Converter={StaticResource BooleanReConverter}}" Command="{Binding ResetCommand}"/>
+                    </WrapPanel>
+                </GroupBox>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

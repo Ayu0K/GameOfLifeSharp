@@ -55,19 +55,23 @@ namespace GameOfLife.Models
                 NextAlive = true;
             }
             // 当前细胞为存活状态时，当周围的邻居细胞少于２个存活时，该细胞变成湮灭状态(数量稀少)。
-            if (IsAlive && aliveNeighbors < 2)
+            else if (IsAlive && aliveNeighbors < 2)
             {
                 NextAlive = false;
             }
             // 当前细胞为存活状态时，当周围有３个以上的存活细胞时，该细胞变成湮灭状态(数量过多)。
-            if (IsAlive && aliveNeighbors > 3)
+            else if (IsAlive && aliveNeighbors > 3)
             {
                 NextAlive = false;
             }
             // 当前细胞为存活状态时，当周围有２个或３个存活细胞时，该细胞保持原样。
-            if (IsAlive && (aliveNeighbors == 2 || aliveNeighbors == 3))
+            else if (IsAlive && (aliveNeighbors == 2 || aliveNeighbors == 3))
             {
                 NextAlive = true;
+            }
+            else
+            {
+                NextAlive = false;
             }
         }
 

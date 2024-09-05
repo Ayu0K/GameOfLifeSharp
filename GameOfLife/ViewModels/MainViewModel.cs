@@ -192,9 +192,9 @@ namespace GameOfLife.ViewModels
                 Cells.Add(new CellModel());
             }
             // 建立邻居关系
-            for (int currentRow = 0; currentRow < MapWidth; currentRow++)
+            for (int currentRow = 0; currentRow < MapHeight; currentRow++)
             {
-                for (int currentColumn = 0; currentColumn < MapHeight; currentColumn++)
+                for (int currentColumn = 0; currentColumn < MapWidth; currentColumn++)
                 {
                     int currentIndex = currentRow * MapWidth + currentColumn;
                     // 读取周围3*3区域内的成员
